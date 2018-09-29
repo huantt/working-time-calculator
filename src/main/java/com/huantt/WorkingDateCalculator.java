@@ -1,5 +1,7 @@
 package com.huantt;
 
+import org.joda.time.LocalTime;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -11,36 +13,47 @@ public class WorkingDateCalculator {
 
     private int startWorkingDay;
     private int endWorkingDay;
-    private int startWorkingHour;
-    private int endWorkingHour;
+    private LocalTime startWorkingTime;
+    private LocalTime endWorkingTime;
+    private LocalTime startLunchTime;
+    private LocalTime endLuchTime;
+
 
     public WorkingDateCalculator() {
         startWorkingDay = Calendar.MONDAY;
         endWorkingDay = Calendar.FRIDAY;
-        startWorkingHour = 8; //Start work at 08:00
-        endWorkingHour = 18;//End work at 18:00
+        startWorkingTime = new LocalTime(8, 0); //Start work at 08:00
+        endWorkingTime = new LocalTime(17, 0);//End work at 18:00
+        startLunchTime = new LocalTime(12, 0); //Start lunch time at 12:00
+        endLuchTime = new LocalTime(13, 0);//End lunch time at 13:00
     }
 
-    public WorkingDateCalculator(int startWorkingDay, int endWorkingDay, int startWorkingHour, int endWorkingHour) {
+    public WorkingDateCalculator(int startWorkingDay, int endWorkingDay, LocalTime startWorkingTime, LocalTime endWorkingTime, LocalTime startLunchTime, LocalTime endLuchTime) {
         this.startWorkingDay = startWorkingDay;
         this.endWorkingDay = endWorkingDay;
-        this.startWorkingHour = startWorkingHour;
-        this.endWorkingHour = endWorkingHour;
+        this.startWorkingTime = startWorkingTime;
+        this.endWorkingTime = endWorkingTime;
+        this.startLunchTime = startLunchTime;
+        this.endLuchTime = endLuchTime;
     }
 
-    public WorkingDateCalculator(int startWorkingHour, int endWorkingHour) {
-        this.startWorkingHour = startWorkingHour;
-        this.endWorkingHour = endWorkingHour;
+    public int getWorkingHours(Date start, Date end) {
+        int workingSeconds = this.getWorkingSeconds(start, end);
+        return (int) TimeUnit.SECONDS.toHours(workingSeconds);
     }
 
-    public int getWorkingHours(Date start, Date end){
+    public int getWorkingMinutes(Date start, Date end) {
+        int workingSeconds = this.getWorkingSeconds(start, end);
+        return (int) TimeUnit.SECONDS.toMinutes(workingSeconds);
+    }
+
+    public int getWorkingSeconds(Date start, Date end) {
         Calendar startCal = Calendar.getInstance();
         Calendar endCal = Calendar.getInstance();
         startCal.setTime(start);
         endCal.setTime(end);
-        return this.getWorkingHours(startCal, endCal);
+        return this.getWorkingSeconds(startCal, endCal);
     }
-
 
     public int getWorkingHours(Calendar start, Calendar end) {
         int workingSeconds = this.getWorkingSeconds(start, end);
@@ -55,7 +68,7 @@ public class WorkingDateCalculator {
     public int getWorkingSeconds(Calendar start, Calendar end) {
         int workingSeconds = 0;
         while (start.getTimeInMillis() < end.getTimeInMillis()) {
-            if (isWorkingDay(start) && isWorkingHour(start)) {
+            if (isWorkingDay(start) && isWorkingTime(start)) {
                 workingSeconds++;
             }
             start.add(Calendar.SECOND, 1);
@@ -64,14 +77,15 @@ public class WorkingDateCalculator {
         return workingSeconds;
     }
 
-    private boolean isWorkingHour(Calendar calendar) { //TODO: Refactor this name
-        return calendar.get(Calendar.HOUR_OF_DAY) >= startWorkingHour
-                && calendar.get(Calendar.HOUR_OF_DAY) < endWorkingHour;
+    private boolean isWorkingTime(Calendar time) {
+        LocalTime localTime = LocalTime.fromCalendarFields(time);
+        return ((localTime.isAfter(this.startWorkingTime) || localTime.isEqual(this.startWorkingTime)) && (localTime.isBefore(startLunchTime) || localTime.isBefore(startLunchTime)))
+                || ((localTime.isAfter(endLuchTime) || localTime.isEqual(endLuchTime)) && (localTime.isBefore(this.endWorkingTime) || localTime.isBefore(this.endWorkingTime)));
     }
 
-    private boolean isWorkingDay(Calendar calendar) {
-        return calendar.get(Calendar.DAY_OF_WEEK) >= startWorkingDay
-                && calendar.get(Calendar.DAY_OF_WEEK) <= endWorkingDay;
+    private boolean isWorkingDay(Calendar time) {
+        return time.get(Calendar.DAY_OF_WEEK) >= startWorkingDay
+                && time.get(Calendar.DAY_OF_WEEK) <= endWorkingDay;
     }
 
     public int getStartWorkingDay() {
@@ -90,19 +104,35 @@ public class WorkingDateCalculator {
         this.endWorkingDay = endWorkingDay;
     }
 
-    public int getStartWorkingHour() {
-        return startWorkingHour;
+    public LocalTime getStartWorkingTime() {
+        return startWorkingTime;
     }
 
-    public void setStartWorkingHour(int startWorkingHour) {
-        this.startWorkingHour = startWorkingHour;
+    public void setStartWorkingTime(LocalTime startWorkingTime) {
+        this.startWorkingTime = startWorkingTime;
     }
 
-    public int getEndWorkingHour() {
-        return endWorkingHour;
+    public LocalTime getEndWorkingTime() {
+        return endWorkingTime;
     }
 
-    public void setEndWorkingHour(int endWorkingHour) {
-        this.endWorkingHour = endWorkingHour;
+    public void setEndWorkingTime(LocalTime endWorkingTime) {
+        this.endWorkingTime = endWorkingTime;
+    }
+
+    public LocalTime getStartLunchTime() {
+        return startLunchTime;
+    }
+
+    public void setStartLunchTime(LocalTime startLunchTime) {
+        this.startLunchTime = startLunchTime;
+    }
+
+    public LocalTime getEndLuchTime() {
+        return endLuchTime;
+    }
+
+    public void setEndLuchTime(LocalTime endLuchTime) {
+        this.endLuchTime = endLuchTime;
     }
 }
