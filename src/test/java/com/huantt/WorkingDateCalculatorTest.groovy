@@ -1,5 +1,6 @@
 package com.huantt
 
+import org.joda.time.LocalTime
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -14,8 +15,11 @@ class WorkingDateCalculatorTest extends Specification {
     def "get working seconds (Date start, Date end)"() {
         when:
         WorkingDateCalculator workingDateCalculator = new WorkingDateCalculator()
+        workingDateCalculator.setStartLunchTime(new LocalTime(12,0))
+        workingDateCalculator.setEndLuchTime(new LocalTime(13,0))
+
         then:
-        workingDateCalculator.getWorkingSeconds(startDate, endDate) == workingSeconds
+        workingDateCalculator.getWorkingSeconds(startDate, endDate) == workingSeconds.toInteger()
 
         where:
         startDate                                                | endDate                                                  | workingSeconds
@@ -37,8 +41,11 @@ class WorkingDateCalculatorTest extends Specification {
     def "get working minutes (Date start, Date end)"() {
         when:
         WorkingDateCalculator workingDateCalculator = new WorkingDateCalculator()
+        workingDateCalculator.setStartLunchTime(new LocalTime(12,0))
+        workingDateCalculator.setEndLuchTime(new LocalTime(13,0))
+
         then:
-        workingDateCalculator.getWorkingMinutes(startDate, endDate) == workingMinutes
+        workingDateCalculator.getWorkingMinutes(startDate, endDate) == workingMinutes.toInteger()
 
         where:
         startDate                                                | endDate                                                  | workingMinutes
@@ -59,6 +66,9 @@ class WorkingDateCalculatorTest extends Specification {
     def "get working hours (Date start, Date end)"() {
         when:
         WorkingDateCalculator workingDateCalculator = new WorkingDateCalculator()
+        workingDateCalculator.setStartLunchTime(new LocalTime(12,0))
+        workingDateCalculator.setEndLuchTime(new LocalTime(13,0))
+
         then:
         workingDateCalculator.getWorkingHours(startDate, endDate) == workingHours
 
