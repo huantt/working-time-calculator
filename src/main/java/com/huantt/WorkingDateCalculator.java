@@ -79,8 +79,8 @@ public class WorkingDateCalculator {
 
     private boolean isWorkingTime(Calendar time) {
         LocalTime localTime = LocalTime.fromCalendarFields(time);
-        return localTime.isAfter(this.startWorkingTime) && localTime.isBefore(startLunchTime)
-                && localTime.isAfter(endLuchTime) && localTime.isBefore(this.endWorkingTime);
+        return ((localTime.isAfter(this.startWorkingTime) || localTime.isEqual(this.startWorkingTime)) && (localTime.isBefore(startLunchTime) || localTime.isBefore(startLunchTime)))
+                || ((localTime.isAfter(endLuchTime) || localTime.isEqual(endLuchTime)) && (localTime.isBefore(this.endWorkingTime) || localTime.isBefore(this.endWorkingTime)));
     }
 
     private boolean isWorkingDay(Calendar time) {
