@@ -23,7 +23,7 @@ public class WorkingDateCalculator {
         startWorkingDay = Calendar.MONDAY;
         endWorkingDay = Calendar.FRIDAY;
         startWorkingTime = new LocalTime(8, 0); //Start work at 08:00
-        endWorkingTime = new LocalTime(17, 0);//End work at 18:00
+        endWorkingTime = new LocalTime(17, 0);//End work at 17:00
         startLunchTime = new LocalTime();
         endLuchTime = new LocalTime();
     }
