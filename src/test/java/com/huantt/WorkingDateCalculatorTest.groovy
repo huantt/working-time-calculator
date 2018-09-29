@@ -18,7 +18,7 @@ class WorkingDateCalculatorTest extends Specification {
 
         where:
         startDate                                                | endDate                                                  | workingHours
-        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 08:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 18:00:00") | 10
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 08:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 18:00:00") | 8
     }
 
 
