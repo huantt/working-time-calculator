@@ -11,20 +11,70 @@ import java.util.concurrent.TimeUnit
 class WorkingDateCalculatorTest extends Specification {
 
     @Unroll
-    def "get working hours"() {
+    def "get working seconds (Date start, Date end)"() {
         when:
         WorkingDateCalculator workingDateCalculator = new WorkingDateCalculator()
         then:
-        workingDateCalculator.getWorkingSeconds(startDate, endDate) == workingHours
+        workingDateCalculator.getWorkingSeconds(startDate, endDate) == workingSeconds
+
+        where:
+        startDate                                                | endDate                                                  | workingSeconds
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-19 17:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 08:00:00") | TimeUnit.HOURS.toSeconds(0)
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 06:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 08:00:00") | TimeUnit.HOURS.toSeconds(0)
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 06:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 08:30:00") | TimeUnit.MINUTES.toSeconds(30)
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 08:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 12:00:00") | TimeUnit.HOURS.toSeconds(4)
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 08:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 12:30:00") | TimeUnit.HOURS.toSeconds(4)
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 12:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 13:00:00") | TimeUnit.HOURS.toSeconds(0)
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 12:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 13:30:00") | TimeUnit.MINUTES.toSeconds(30)
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 13:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 17:00:00") | TimeUnit.HOURS.toSeconds(4)
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 13:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 20:00:00") | TimeUnit.HOURS.toSeconds(4)
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 13:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-21 16:01:00") | TimeUnit.HOURS.toSeconds(11) + TimeUnit.MINUTES.toSeconds(1)
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 13:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-21 16:01:01") | TimeUnit.HOURS.toSeconds(11) + TimeUnit.MINUTES.toSeconds(1) + 1
+    }
+
+
+    @Unroll
+    def "get working minutes (Date start, Date end)"() {
+        when:
+        WorkingDateCalculator workingDateCalculator = new WorkingDateCalculator()
+        then:
+        workingDateCalculator.getWorkingMinutes(startDate, endDate) == workingMinutes
+
+        where:
+        startDate                                                | endDate                                                  | workingMinutes
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-19 17:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 08:00:00") | TimeUnit.HOURS.toMinutes(0)
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 06:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 08:00:00") | TimeUnit.HOURS.toMinutes(0)
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 06:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 08:30:00") | 30
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 08:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 12:00:00") | TimeUnit.HOURS.toMinutes(4)
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 08:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 12:30:00") | TimeUnit.HOURS.toMinutes(4)
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 12:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 13:00:00") | TimeUnit.HOURS.toMinutes(0)
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 12:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 13:30:00") | 30
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 13:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 17:00:00") | TimeUnit.HOURS.toMinutes(4)
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 13:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 20:00:00") | TimeUnit.HOURS.toMinutes(4)
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 13:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-21 16:01:00") | TimeUnit.HOURS.toMinutes(11) + 1
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 13:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-21 16:01:01") | TimeUnit.HOURS.toMinutes(11) + 1
+    }
+
+    @Unroll
+    def "get working hours (Date start, Date end)"() {
+        when:
+        WorkingDateCalculator workingDateCalculator = new WorkingDateCalculator()
+        then:
+        workingDateCalculator.getWorkingHours(startDate, endDate) == workingHours
 
         where:
         startDate                                                | endDate                                                  | workingHours
-        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 08:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 17:00:00") | TimeUnit.HOURS.toSeconds(8)
-        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 08:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-21 17:00:00") | TimeUnit.HOURS.toSeconds(16)
-        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 08:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-21 15:00:00") | TimeUnit.HOURS.toSeconds(14)
-        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 08:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-21 15:01:00") | TimeUnit.HOURS.toSeconds(14) + TimeUnit.MINUTES.toSeconds(1)
-        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 08:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-21 15:00:01") | TimeUnit.HOURS.toSeconds(14) + 1
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-19 17:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 08:00:00") | 0
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 06:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 08:00:00") | 0
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 06:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 08:30:00") | 0
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 08:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 12:00:00") | 4
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 08:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 12:30:00") | 4
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 12:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 13:00:00") | 0
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 12:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 13:30:00") | 0
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 13:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 17:00:00") | 4
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 13:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 20:00:00") | 4
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 13:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-21 16:01:00") | 11
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 13:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-21 16:01:01") | 11
     }
-
 
 }
