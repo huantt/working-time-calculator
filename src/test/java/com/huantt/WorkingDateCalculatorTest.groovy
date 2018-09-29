@@ -15,10 +15,10 @@ class WorkingDateCalculatorTest extends Specification {
         then:
         workingDateCalculator.getWorkingHours(startDate, endDate) == workingHours
 
-
         where:
         startDate                                                | endDate                                                  | workingHours
-        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 08:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 18:00:00") | 8
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 08:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 17:00:00") | 7
+        Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-20 08:00:00") | Date.parse("yyyy-MM-dd HH:mm:ss", "2018-09-21 15:00:00") | 5
     }
 
 
